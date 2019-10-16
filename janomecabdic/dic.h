@@ -48,11 +48,11 @@ inline CharInfo _get_char_info(void *m, size_t offset, unsigned short code_point
 }
 
 
-inline std::pair<Token, std::string> _get_token(void *token, void *feature, int index)
+inline std::pair<Token, std::string> _get_token(void *token, void *feature, unsigned int index)
 {
-	Token t = reinterpret_cast<Token *>(token)[index];
-	std::string s(reinterpret_cast<char *>(feature) + t.feature);
-	return std::make_pair(t, s);
+    Token t = reinterpret_cast<Token *>(token)[index];
+    std::string s(reinterpret_cast<char *>(feature) + t.feature);
+    return std::make_pair(t, s);
 }
 
 

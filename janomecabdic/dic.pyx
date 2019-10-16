@@ -42,7 +42,7 @@ cdef extern from "dic.h":
     cdef int _exact_match_search(DoubleArray *da, char *s) nogil
     cdef vector[pair[int, size_t]] _common_prefix_search(DoubleArray *da, char *s) nogil
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
-    cdef pair[Token, string] _get_token(void *token, void *feature, int index) nogil
+    cdef pair[Token, string] _get_token(void *token, void *feature, unsigned int index) nogil
     cdef vector[int] _lookup(DoubleArray *da, void *token, char *s) nogil
     cdef int _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
 
@@ -107,7 +107,7 @@ cdef class DicFileMap:
 
     cpdef get_token_by_index(self, idx):
         t, f = _get_token(self.token, self.feature, idx)
-        return (idx, t, f.decode('utf-8'))
+        return (t, f.decode('utf-8'))
 
     cpdef get_tokens(self, result):
         index = result >> 8
@@ -174,7 +174,7 @@ cdef class MecabDictionary:
         for category_name in self.char_property.category_names:
             entries = []
             result = self.unk_dic.exactMatchSearch(category_name.encode('utf-8'))
-            for _, t, f in self.unk_dic.get_tokens(result):
+            for t, f in self.unk_dic.get_tokens(result):
                 entries.append(
                     (t['lcAttr'], t['rcAttr'], t['wcost'], ','.join(f.split(',')[:4]))
                 )
@@ -216,6 +216,6 @@ cdef class MecabDictionary:
         ]
 
     def lookup_extra(self, idx):
-        _, _, f = self.sys_dic.get_token_by_index(idx)
+        _, f = self.sys_dic.get_token_by_index(idx)
         f = f.split(',')
         return ','.join(f[:4]), f[4], f[5], f[6], f[7], f[8]
