@@ -4,7 +4,7 @@ from janome.tokenizer import Tokenizer
 import janomecabdic
 
 
-class TestDict(unittest.TestCase):
+class TestDic(unittest.TestCase):
     def setUp(self):
         self.tokenizer = Tokenizer()
         self.mecab_dic = janomecabdic.MecabDictionary()
@@ -114,6 +114,16 @@ class TestDict(unittest.TestCase):
         for r in r2:
             s2.add(self.mecab_dic.lookup_extra(r[0]))
         self.assertEqual(s1, s2)
+
+    def test_tokenizer(self):
+        s = 'すもももももももものうち'
+        t = Tokenizer()
+        t.sys_dic = janomecabdic.MecabDictionary()
+        self.assertEqual(
+            [str(token) for token in t.tokenize(s)],
+            [str(token) for token in self.tokenizer.tokenize(s)]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
