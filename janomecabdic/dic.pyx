@@ -75,9 +75,9 @@ cdef class CharProperty:
 
 cdef class DicFileMap:
     cdef void *mmap
+    cdef void *token, *feature
     cdef size_t size
     cdef int version, dictype, lexsize, lsize, rsize
-    cdef size_t token_offset, feature_offset
     cdef object charset
     cdef DoubleArray *da
 
@@ -102,14 +102,11 @@ cdef class DicFileMap:
         self.da = new DoubleArray()
         self.da.set_array(self.mmap + 72)
 
-        self.token_offset = 72 + dsize
-        self.feature_offset = self.token_offset + tsize
-
-        if self.size != self.feature_offset + fsize:
-            raise ValueError("{} is broken".format(path))
+        self.token = self.mmap + 72 + dsize
+        self.feature = self.token + tsize
 
     cpdef get_token_by_index(self, idx):
-        t, f = _get_token(self.mmap+self.token_offset, self.mmap+self.feature_offset, idx)
+        t, f = _get_token(self.token, self.feature, idx)
         return (idx, t, f.decode('utf-8'))
 
     cpdef get_tokens(self, result):
@@ -125,11 +122,12 @@ cdef class DicFileMap:
         return _common_prefix_search(self.da, s)
 
     cpdef lookup(self, s):
-        rs = _lookup(self.da, self.mmap+self.token_offset, s)
+        rs = _lookup(self.da, self.token, s)
         return [
             (r[0], s[:r[1]].decode('utf-8'), r[2], r[3], r[4])
             for r in rs
         ]
+
 
     def __del__(self):
         _munmap(self.mmap, self.size)
