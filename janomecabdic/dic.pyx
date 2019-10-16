@@ -44,6 +44,7 @@ cdef extern from "dic.h":
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
     cdef pair[Token, string] _get_token(void *token, void *feature, int index) nogil
     cdef vector[vector[int]] _lookup(DoubleArray *da, void *token, char *s) nogil
+    cdef int _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
 
 
 cdef class CharProperty:
@@ -187,8 +188,7 @@ cdef class MecabDictionary:
             self.unknowns[category_name] = entries
 
     def get_trans_cost(self, id1, id2):
-        cdef int i = (id2 * self.matrix_lsize + id1) * 2 + 4
-        return _get_short(self.matrix_mmap + i)
+        return _get_trans_cost(self.matrix_mmap, id1, id2, self.matrix_lsize)
 
     @lru_cache(maxsize=1024)
     def get_char_categories(self, c):

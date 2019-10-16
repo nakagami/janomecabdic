@@ -79,3 +79,9 @@ inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *toke
     return results;
 }
 
+
+inline short _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
+{
+    int i = (id2 * matrix_lsize + id1) * 2 + 4;
+    return *reinterpret_cast<short *>(m + i);
+}
