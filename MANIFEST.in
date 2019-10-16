@@ -1,0 +1,3 @@
+include README.rst LICENSE BSD LGPL
+recursive-include janomecabdic *.pyx *.h
+recursive-include janomecabdic/darts *
