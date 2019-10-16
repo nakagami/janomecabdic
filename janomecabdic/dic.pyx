@@ -43,7 +43,7 @@ cdef extern from "dic.h":
     cdef vector[pair[int, size_t]] _common_prefix_search(DoubleArray *da, char *s) nogil
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
     cdef pair[Token, string] _get_token(void *token, void *feature, int index) nogil
-    cdef vector[vector[int]] _lookup(DoubleArray *da, void *token, char *s) nogil
+    cdef vector[int] _lookup(DoubleArray *da, void *token, char *s) nogil
     cdef int _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
 
 
@@ -122,12 +122,7 @@ cdef class DicFileMap:
         return _common_prefix_search(self.da, s)
 
     cpdef lookup(self, s):
-        rs = _lookup(self.da, self.token, s)
-        return [
-            (r[0], s[:r[1]].decode('utf-8'), r[2], r[3], r[4])
-            for r in rs
-        ]
-
+        return zip(*[iter(_lookup(self.da, self.token, s))]*5)
 
     def __del__(self):
         _munmap(self.mmap, self.size)
@@ -215,7 +210,10 @@ cdef class MecabDictionary:
         return -1
 
     def lookup(self, s):
-        return self.sys_dic.lookup(s)
+        return [
+            (r[0], s[:r[1]].decode('utf-8'), r[2], r[3], r[4])
+            for r in self.sys_dic.lookup(s)
+        ]
 
     def lookup_extra(self, idx):
         _, _, f = self.sys_dic.get_token_by_index(idx)

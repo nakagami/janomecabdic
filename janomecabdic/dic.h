@@ -56,9 +56,9 @@ inline std::pair<Token, std::string> _get_token(void *token, void *feature, int 
 }
 
 
-inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *token, char *s)
+inline std::vector<int> _lookup(Darts::DoubleArray *da, void *token, char *s)
 {
-    std::vector<std::vector <int> > results;
+    std::vector<int> results;
 
     Darts::DoubleArray::result_pair_type  result_pair[1024];
     size_t num = da->commonPrefixSearch(s, result_pair, sizeof(result_pair));
@@ -66,14 +66,12 @@ inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *toke
         unsigned int idx = result_pair[i].value >> 8;
         int count = result_pair[i].value & 0xFF;
         for (int j = 0; j < count; ++j) {
-            std::vector<int> r;
-            r.push_back(idx + j);
-            r.push_back(result_pair[i].length);
-	        Token t = reinterpret_cast<Token *>(token)[idx + j];
-            r.push_back(t.lcAttr);
-            r.push_back(t.rcAttr);
-            r.push_back(t.wcost);
-            results.push_back(r);
+            results.push_back(idx + j);
+            results.push_back(result_pair[i].length);
+            Token t = reinterpret_cast<Token *>(token)[idx + j];
+            results.push_back(t.lcAttr);
+            results.push_back(t.rcAttr);
+            results.push_back(t.wcost);
         }
     }
     return results;
