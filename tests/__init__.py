@@ -7,7 +7,7 @@ import janomecabdic
 class TestDic(unittest.TestCase):
     def setUp(self):
         self.tokenizer = Tokenizer()
-        self.mecab_dic = janomecabdic.MecabDictionary()
+        self.mecab_dic = janomecabdic.MeCabDictionary()
 
     def test_get_trans_cost(self):
         # trans cost
@@ -118,7 +118,7 @@ class TestDic(unittest.TestCase):
     def test_tokenizer(self):
         s = 'すもももももももものうち'
         t = Tokenizer()
-        t.sys_dic = janomecabdic.MecabDictionary()
+        t.sys_dic = janomecabdic.MeCabDictionary()
         self.assertEqual(
             [str(token) for token in t.tokenize(s)],
             [str(token) for token in self.tokenizer.tokenize(s)]

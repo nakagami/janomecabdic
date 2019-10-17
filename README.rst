@@ -4,7 +4,7 @@ janomecabdic
 
 This is an add-on package for janome https://mocobeta.github.io/janome/ .
 
-Janome can use compiled dictionaries for Mecab https://taku910.github.io/mecab/ 
+Janome can use compiled dictionaries for MeCab https://taku910.github.io/mecab/
 via janomecabdic.
 
 Example
@@ -13,9 +13,9 @@ Example
 ::
 
     >>> from janome.tokenizer import Tokenizer
-    >>> from janomecabdic import MecabDictionary
+    >>> from janomecabdic import MeCabDictionary
     >>> t = Tokenizer()
-    >>> t.sys_dic = MecabDictionary()
+    >>> t.sys_dic = MeCabDictionary()
     >>> for token in t.tokenize('すもももももももものうち'):
     ...     print(token)
     ...
@@ -39,7 +39,7 @@ Requirements
 Instration
 -------------------------
 
-Install Mecab and Mecab dictionary.
+Install MeCab and MeCab dictionary.
 (e.g.: Ubuntu/Debian)
 
 ::

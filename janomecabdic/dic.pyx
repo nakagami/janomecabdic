@@ -9,7 +9,7 @@ from libcpp.vector cimport vector
 from libcpp.pair cimport pair
 
 
-__all__ = ["MecabDictionary"]
+__all__ = ["MeCabDictionary"]
 
 
 cdef extern from "darts/darts.h" namespace "Darts":
@@ -136,7 +136,7 @@ cdef class DicFileMap:
         _munmap(self.mmap, self.size)
 
 
-cdef class MecabDictionary:
+cdef class MeCabDictionary:
     cdef public object dicdir, char_property, sys_dic, unk_dic
     cdef public object char_categories, unknowns
     cdef void *matrix_mmap
