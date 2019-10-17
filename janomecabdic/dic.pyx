@@ -36,6 +36,14 @@ cdef extern from "mecab_struct.h":
 
 
 cdef extern from "dic.h":
+    cdef struct LookupToken:
+        unsigned short lcAttr
+        unsigned short rcAttr
+        unsigned short posid
+        short wcost
+        unsigned int length
+        unsigned int idx
+
     cdef void *_mmap_fd(int, size_t)
     cdef int _munmap(void *, size_t)
     cdef short _get_short(void *) nogil
@@ -43,7 +51,7 @@ cdef extern from "dic.h":
     cdef vector[pair[int, size_t]] _common_prefix_search(DoubleArray *da, char *s) nogil
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
     cdef pair[Token, string] _get_token(void *token, void *feature, unsigned int index) nogil
-    cdef vector[int] _lookup(DoubleArray *da, void *token, char *s) nogil
+    cdef vector[LookupToken] _lookup(DoubleArray *da, void *token, char *s) nogil
     cdef int _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
 
 
@@ -122,7 +130,7 @@ cdef class DicFileMap:
         return _common_prefix_search(self.da, s)
 
     cpdef lookup(self, s):
-        return zip(*[iter(_lookup(self.da, self.token, s))]*5)
+        return _lookup(self.da, self.token, s)
 
     def __del__(self):
         _munmap(self.mmap, self.size)
@@ -211,7 +219,7 @@ cdef class MecabDictionary:
 
     def lookup(self, s):
         return [
-            (r[0], s[:r[1]].decode('utf-8'), r[2], r[3], r[4])
+            (r['idx'], s[:r['length']].decode('utf-8'), r['lcAttr'], r['rcAttr'], r['wcost'])
             for r in self.sys_dic.lookup(s)
         ]
 

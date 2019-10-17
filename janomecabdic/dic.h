@@ -6,6 +6,16 @@
 #include "darts/darts.h"
 #include "mecab_struct.h"
 
+struct LookupToken {
+    unsigned short lcAttr;
+    unsigned short rcAttr;
+    unsigned short posid;
+    short wcost;
+    unsigned int   length;
+    unsigned int   idx;
+};
+
+
 
 inline void *_mmap_fd(int fd, size_t size)
 {
@@ -56,9 +66,9 @@ inline std::pair<Token, std::string> _get_token(void *token, void *feature, unsi
 }
 
 
-inline std::vector<int> _lookup(Darts::DoubleArray *da, void *token, char *s)
+inline std::vector<LookupToken> _lookup(Darts::DoubleArray *da, void *token, char *s)
 {
-    std::vector<int> results;
+    std::vector<LookupToken> results;
 
     Darts::DoubleArray::result_pair_type  result_pair[1024];
     size_t num = da->commonPrefixSearch(s, result_pair, sizeof(result_pair));
@@ -66,12 +76,10 @@ inline std::vector<int> _lookup(Darts::DoubleArray *da, void *token, char *s)
         unsigned int idx = result_pair[i].value >> 8;
         int count = result_pair[i].value & 0xFF;
         for (int j = 0; j < count; ++j) {
-            results.push_back(idx + j);
-            results.push_back(result_pair[i].length);
-            Token t = reinterpret_cast<Token *>(token)[idx + j];
-            results.push_back(t.lcAttr);
-            results.push_back(t.rcAttr);
-            results.push_back(t.wcost);
+            LookupToken t = reinterpret_cast<LookupToken *>(token)[idx + j];
+            t.idx = idx + j;
+            t.length = result_pair[i].length;
+            results.push_back(t);
         }
     }
     return results;
