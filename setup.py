@@ -11,7 +11,7 @@ classifiers = [
 
 setup(
     name="janomecabdic",
-    version="%d.%d.%d" % __import__('janomecabdic').VERSION,
+    version="0.0.1",
     url='https://github.com/nakagami/janomecabdic/',
     classifiers=classifiers,
     license="LGPL2,BSD",

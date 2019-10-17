@@ -33,7 +33,7 @@ Requirements
 
 - MeCab + MeCab dictionary (utf-8 encoded)
 - Python 3.5+
-- Cython (with C++ compiler)
+- Cython available environment (C++ compiler)
 - janome
 
 Instration
@@ -46,13 +46,12 @@ Install MeCab and MeCab dictionary.
 
     sudo apt install mecab mecab-ipadic-utf8
 
-Install C++ compiler and Cython.
+Install C++ compiler for Cython.
 (e.g.: Ubuntu/Debian)
 
 ::
 
     sudo apt install build-essential
-    pip intall cython
 
 Install janome and janomecabdic.
 
