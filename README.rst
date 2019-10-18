@@ -39,8 +39,8 @@ Install janome and janomecabdic.
     pip install janome janomecabdic
 
 
-Example (use MeCab dictionary)
-----------------------------------
+Example (use /etc/mecabrc defined dictionary)
+------------------------------------------------------------
 
 Sample code
 +++++++++++++++
@@ -63,8 +63,8 @@ Sample code
     うち    名詞,非自立,副詞可能,*,*,*,うち,ウチ,ウチ
 
 
-Excample (use Neologd)
-----------------------------------
+Neologd example (tokenize with a specific dictionary)
+--------------------------------------------------------------------
 
 Install Neologd (e.g. Ubuntu/Debian)
 +++++++++++++++++++++++++++++++++++++++++
