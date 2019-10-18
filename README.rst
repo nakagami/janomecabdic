@@ -71,7 +71,7 @@ Install Neologd (e.g. Ubuntu/Debian)
 
 ::
 
-   sudo apt install mecab libmecab-dev
+   sudo apt install mecab mecab-ipadic-utf8 libmecab-dev
    git clone --depth 1 git@github.com:neologd/mecab-ipadic-neologd.git
    cd mecab-ipadic-neologd
    echo `mecab-config --dicdir`"/mecab-ipadic-neologd"
