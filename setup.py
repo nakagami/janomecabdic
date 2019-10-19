@@ -2,9 +2,6 @@ from setuptools import setup, Extension
 
 classifiers = [
     'Development Status :: 3 - Alpha',
-    'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)'
-    'License :: OSI Approved :: BSD License'
-    'Operating System :: POSIX :: Linux'
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
 ]
