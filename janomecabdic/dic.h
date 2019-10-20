@@ -2,6 +2,7 @@
 // Licensed under any of LGPL2.1 or BSD License.
 
 #include <string>
+#include <algorithm>
 #include <sys/mman.h>
 #include "darts/darts.h"
 #include "mecab_struct.h"
@@ -42,10 +43,11 @@ inline int _exact_match_search(Darts::DoubleArray *da, char *s)
 
 inline std::vector<std::pair<int, size_t> > _common_prefix_search(Darts::DoubleArray *da, char *s)
 {
+    RESULT_SIZE = 1024;
     std::vector<std::pair<int, size_t> > r;
-    Darts::DoubleArray::result_pair_type  result_pair[1024];
+    Darts::DoubleArray::result_pair_type  result_pair[RESULT_SIZE];
     size_t num = da->commonPrefixSearch(s, result_pair, sizeof(result_pair));
-    for (size_t i = 0; i < num; ++i) {
+    for (size_t i = 0; i < std:min(num, RESULT_SIZE); ++i) {
         r.push_back(std::make_pair(result_pair[i].value, result_pair[i].length));
     }
     return r;
