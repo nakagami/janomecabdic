@@ -47,7 +47,7 @@ cdef extern from "dic.h":
     cdef void *_mmap_fd(int, size_t)
     cdef int _munmap(void *, size_t)
     cdef short _get_short(void *) nogil
-    cdef int _exact_match_search(DoubleArray *da, char *s) nogil
+    cdef pair[int, size_t] _exact_match_search(DoubleArray *da, char *s) nogil
     cdef vector[pair[int, size_t]] _common_prefix_search(DoubleArray *da, char *s) nogil
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
     cdef pair[Token, string] _get_token(void *token, void *feature, unsigned int index) nogil
@@ -124,7 +124,8 @@ cdef class DicFileMap:
         return [self.get_token_by_index(i) for i in range(index, index + count)]
 
     cpdef exactMatchSearch(self, s):
-        return _exact_match_search(self.da, s)
+        v, l = _exact_match_search(self.da, s)
+        return v
 
     cpdef commonPrefixSearch(self, s):
         return _common_prefix_search(self.da, s)

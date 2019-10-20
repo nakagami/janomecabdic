@@ -35,9 +35,11 @@ inline short _get_short(void *m)
 }
 
 
-inline int _exact_match_search(Darts::DoubleArray *da, char *s)
+inline std::pair<int, size_t> _exact_match_search(Darts::DoubleArray *da, char *s)
 {
-    return da->exactMatchSearch<Darts::DoubleArray::result_type>(s);
+    Darts::DoubleArray::result_pair_type  result_pair;
+    result_pair = da->exactMatchSearch<Darts::DoubleArray::result_pair_type>(s);
+    return std::make_pair(result_pair.value, result_pair.length);
 }
 
 
