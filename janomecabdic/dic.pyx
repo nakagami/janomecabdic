@@ -36,22 +36,15 @@ cdef extern from "mecab_struct.h":
 
 
 cdef extern from "dic.h":
-    cdef struct LookupToken:
-        unsigned short lcAttr
-        unsigned short rcAttr
-        unsigned short posid
-        short wcost
-        unsigned int length
-        unsigned int idx
-
     cdef void *_mmap_fd(int, size_t)
     cdef int _munmap(void *, size_t)
     cdef short _get_short(void *) nogil
     cdef pair[int, size_t] _exact_match_search(DoubleArray *da, char *s) nogil
     cdef vector[pair[int, size_t]] _common_prefix_search(DoubleArray *da, char *s) nogil
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
-    cdef pair[Token, string] _get_token(void *token, void *feature, unsigned int index) nogil
-    cdef vector[LookupToken] _lookup(DoubleArray *da, void *token, char *s) nogil
+    cdef vector[pair[Token, string]] _get_tokens(void *token, void *feature, unsigned int index, unsigned int) nogil
+    cdef string _get_feature(void *token, void *feature, unsigned int index) nogil
+    cdef vector[vector[int]] _lookup(DoubleArray *da, void *token, char *s) nogil
     cdef int _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
 
 
@@ -113,15 +106,14 @@ cdef class DicFileMap:
         self.token = self.mmap + 72 + dsize
         self.feature = self.token + tsize
 
-    cpdef get_token_by_index(self, idx):
-        t, f = _get_token(self.token, self.feature, idx)
-        return (t, f.decode('utf-8'))
+    cpdef get_tokens_by_index(self, idx, count):
+        results = _get_tokens(self.token, self.feature, idx, count)
+        return [(t['lcAttr'], t['rcAttr'], t['posid'], t['wcost'], f.decode('utf-8')) for t, f in results]
 
     cpdef get_tokens(self, result):
         index = result >> 8
         count = result & 0xFF
-        results = []
-        return [self.get_token_by_index(i) for i in range(index, index + count)]
+        return self.get_tokens_by_index(index, count)
 
     cpdef exactMatchSearch(self, s):
         v, l = _exact_match_search(self.da, s)
@@ -132,6 +124,9 @@ cdef class DicFileMap:
 
     cpdef lookup(self, s):
         return _lookup(self.da, self.token, s)
+
+    cpdef get_feature(self, idx):
+        return _get_feature(self.token, self.feature, idx)
 
     def __del__(self):
         _munmap(self.mmap, self.size)
@@ -183,9 +178,9 @@ cdef class MeCabDictionary:
         for category_name in self.char_property.category_names:
             entries = []
             result = self.unk_dic.exactMatchSearch(category_name.encode('utf-8'))
-            for t, f in self.unk_dic.get_tokens(result):
+            for l, r, p, w , f in self.unk_dic.get_tokens(result):
                 entries.append(
-                    (t['lcAttr'], t['rcAttr'], t['wcost'], ','.join(f.split(',')[:4]))
+                    (l, r, w, ','.join(f.split(',')[:4]))
                 )
             self.unknowns[category_name] = entries
 
@@ -220,11 +215,10 @@ cdef class MeCabDictionary:
 
     def lookup(self, s):
         return [
-            (r['idx'], s[:r['length']].decode('utf-8'), r['lcAttr'], r['rcAttr'], r['wcost'])
-            for r in self.sys_dic.lookup(s)
+            (idx, s[:length].decode('utf-8'), l, r, w)
+            for l, r, p, w, length, idx in self.sys_dic.lookup(s)
         ]
 
     def lookup_extra(self, idx):
-        _, f = self.sys_dic.get_token_by_index(idx)
-        f = f.split(',')
+        f = self.sys_dic.get_feature(idx).decode('utf-8').split(',')
         return ','.join(f[:4]), f[4], f[5], f[6], f[7], f[8]

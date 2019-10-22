@@ -7,17 +7,6 @@
 #include "darts/darts.h"
 #include "mecab_struct.h"
 
-struct LookupToken {
-    unsigned short lcAttr;
-    unsigned short rcAttr;
-    unsigned short posid;
-    short wcost;
-    unsigned int   length;
-    unsigned int   idx;
-};
-
-
-
 inline void *_mmap_fd(int fd, size_t size)
 {
     return mmap(0, size, PROT_READ, MAP_PRIVATE, fd, 0);
@@ -62,17 +51,29 @@ inline CharInfo _get_char_info(void *m, size_t offset, unsigned short code_point
 }
 
 
-inline std::pair<Token, std::string> _get_token(void *token, void *feature, unsigned int index)
+inline std::vector<std::pair<Token, std::string> >_get_tokens(void *token, void *feature, unsigned int index, unsigned int count)
 {
-    Token t = reinterpret_cast<Token *>(token)[index];
-    std::string s(reinterpret_cast<char *>(feature) + t.feature);
-    return std::make_pair(t, s);
+    std::vector<std::pair<Token, std::string> > results;
+    for (unsigned int i = 0; i< count; ++i) {
+        Token t = reinterpret_cast<Token *>(token)[index+i];
+        std::string s(reinterpret_cast<char *>(feature) + t.feature);
+        results.push_back(std::make_pair(t, s));
+    }
+    return results;
 }
 
 
-inline std::vector<LookupToken> _lookup(Darts::DoubleArray *da, void *token, char *s)
+inline std::string _get_feature(void *token, void *feature, unsigned int index)
 {
-    std::vector<LookupToken> results;
+    Token t = reinterpret_cast<Token *>(token)[index];
+    std::string s(reinterpret_cast<char *>(feature) + t.feature);
+    return s;
+}
+
+
+inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *token, char *s)
+{
+    std::vector<std::vector<int> > results;
 
     Darts::DoubleArray::result_pair_type  result_pair[1024];
     size_t num = da->commonPrefixSearch(s, result_pair, sizeof(result_pair));
@@ -80,10 +81,15 @@ inline std::vector<LookupToken> _lookup(Darts::DoubleArray *da, void *token, cha
         unsigned int idx = result_pair[i].value >> 8;
         int count = result_pair[i].value & 0xFF;
         for (int j = 0; j < count; ++j) {
-            LookupToken t = reinterpret_cast<LookupToken *>(token)[idx + j];
-            t.idx = idx + j;
-            t.length = result_pair[i].length;
-            results.push_back(t);
+            Token t = reinterpret_cast<Token *>(token)[idx + j];
+            std::vector<int> v;
+            v.push_back(t.lcAttr);
+            v.push_back(t.rcAttr);
+            v.push_back(t.posid);
+            v.push_back(t.wcost);
+            v.push_back(result_pair[i].length);
+            v.push_back(idx + j);
+            results.push_back(v);
         }
     }
     return results;
