@@ -86,23 +86,23 @@ class DicFileMap:
         return self.get_tokens_by_index(index, count)
 
     @lru_cache(maxsize=1024)
-    def _get_unit(self, idx):
+    def _get_base_check(self, idx):
         i = self.da_offset + idx * 8
         return struct.unpack('iI', self.mmap[i:i+8])
 
     def exactMatchSearch(self, s):
         v = -1
-        b, _ = self._get_unit(0)
+        b, _ = self._get_base_check(0)
         for i in range(len(s)):
             p = b +s[i] + 1
-            base, check = self._get_unit(p)
+            base, check = self._get_base_check(p)
             if b == check:
                 b = base
             else:
                 return v
 
         p = b
-        n, check = self._get_unit(p)
+        n, check = self._get_base_check(p)
         if b == check and n < 0:
             v = -n-1
 
@@ -110,21 +110,21 @@ class DicFileMap:
 
     def commonPrefixSearch(self, s):
         results = []
-        b, _ = self._get_unit(0)
+        b, _ = self._get_base_check(0)
         for i in range(len(s)):
             p = b
-            n, check = self._get_unit(p)
+            n, check = self._get_base_check(p)
             if b == check and n < 0:
                 results.append((-n-1, i))
             p = b + s[i] + 1
-            base, check = self._get_unit(p)
+            base, check = self._get_base_check(p)
             if b == check:
                 b = base
             else:
                 return results
 
         p = b
-        n, check = self._get_unit(p)
+        n, check = self._get_base_check(p)
         if b == check and n < 0:
             results.append((-n-1, len(s)))
         return results
