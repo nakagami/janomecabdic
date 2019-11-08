@@ -1,7 +1,20 @@
 from setuptools import setup, Extension
 
+try:
+    from Cython.Build import cythonize
+    ext_modules = cythonize([
+        Extension(
+            'janomecabdic.dic',
+            sources=['janomecabdic/dic.pyx'],
+            language='c++',
+        ),
+    ])
+except ImportError:
+    ext_modules = None
+
+
 classifiers = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
 ]
@@ -19,11 +32,5 @@ setup(
     long_description=open('README.rst').read(),
     test_suite="tests",
     setup_requires=["cython"],
-    ext_modules=[
-        Extension(
-            'janomecabdic.dic',
-            sources=['janomecabdic/dic.pyx'],
-            language='c++',
-        ),
-    ],
+    ext_modules=ext_modules,
 )
