@@ -5,7 +5,7 @@
 #ifndef MECAB_STRUCT_H_
 #define MECAB_STRUCT_H_
 
-struct Token {
+struct Entry {
   unsigned short lcAttr;
   unsigned short rcAttr;
   unsigned short posid;

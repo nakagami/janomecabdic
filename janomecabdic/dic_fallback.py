@@ -60,7 +60,7 @@ class DicFileMap:
             self.feature_offset = self.token_offset + tsize
 
     @lru_cache(maxsize=1024)
-    def get_tokens_by_index(self, idx, count):
+    def get_entries_by_index(self, idx, count):
         mmap = self.mmap
         feature_offset = self.feature_offset
 
@@ -79,10 +79,10 @@ class DicFileMap:
             )
         return results
 
-    def get_tokens(self, result):
+    def get_entries(self, result):
         index = result >> 8
         count = result & 0xFF
-        return self.get_tokens_by_index(index, count)
+        return self.get_entries_by_index(index, count)
 
     @lru_cache(maxsize=1024)
     def _get_base_check(self, idx):
@@ -133,7 +133,7 @@ class DicFileMap:
         for value, length in self.commonPrefixSearch(s):
             idx = value >> 8
             count = value & 0xff
-            tokens = self.get_tokens_by_index(idx, count)
+            tokens = self.get_entries_by_index(idx, count)
             for i in range(len(tokens)):
                 l, r, p, w, _ = tokens[i]
                 results.append((l, r, p, w, length, idx + i))
@@ -188,7 +188,7 @@ class MeCabDictionary:
         for category_name in self.char_property.category_names:
             entries = []
             result = self.unk_dic.exactMatchSearch(category_name.encode('utf-8'))
-            for l, r, p, w, f in self.unk_dic.get_tokens(result):
+            for l, r, p, w, f in self.unk_dic.get_entries(result):
                 entries.append(
                     (l, r, w, ','.join(f.split(',')[:4]))
                 )

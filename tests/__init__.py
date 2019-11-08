@@ -84,10 +84,10 @@ class TestDic(unittest.TestCase):
             [(8849415, 3), (9258497, 6), (9259009, 9)]
         )
 
-    def test_get_tokens(self):
+    def test_get_entries(self):
         result = self.mecab_dic.unk_dic.exactMatchSearch(b"CYRILLIC")
         self.assertEqual(result, 1541)
-        self.assertEqual(len(self.mecab_dic.unk_dic.get_tokens(result)), 5)
+        self.assertEqual(len(self.mecab_dic.unk_dic.get_entries(result)), 5)
 
     def test_unknowns(self):
         self.assertEqual(self.mecab_dic.unknowns, self.tokenizer.sys_dic.unknowns)

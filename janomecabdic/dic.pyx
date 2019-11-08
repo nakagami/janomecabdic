@@ -19,7 +19,7 @@ cdef extern from "darts/darts.h" namespace "Darts":
 
 
 cdef extern from "mecab_struct.h":
-    cdef struct Token:
+    cdef struct Entry:
         unsigned short lcAttr   # Left Attribte ID
         unsigned short rcAttr   # Right Attribute ID
         unsigned short posid    # Part of Speech ID
@@ -42,9 +42,9 @@ cdef extern from "dic.h":
     cdef pair[int, size_t] _exact_match_search(DoubleArray *da, char *s) nogil
     cdef vector[pair[int, size_t]] _common_prefix_search(DoubleArray *da, char *s) nogil
     cdef CharInfo _get_char_info(void *, size_t, unsigned int) nogil
-    cdef vector[pair[Token, string]] _get_tokens(void *token, void *feature, unsigned int index, unsigned int) nogil
-    cdef string _get_feature(void *token, void *feature, unsigned int index) nogil
-    cdef vector[vector[int]] _lookup(DoubleArray *da, void *token, char *s) nogil
+    cdef vector[pair[Entry, string]] _get_entries(void *entry, void *feature, unsigned int index, unsigned int) nogil
+    cdef string _get_feature(void *entry, void *feature, unsigned int index) nogil
+    cdef vector[vector[int]] _lookup(DoubleArray *da, void *entry, char *s) nogil
     cdef int _get_trans_cost(void *m, int id1, int id2, int matrix_lsize)
 
 
@@ -76,7 +76,7 @@ cdef class CharProperty:
 
 cdef class DicFileMap:
     cdef void *mmap
-    cdef void *token, *feature
+    cdef void *entry, *feature
     cdef size_t size
     cdef int version, dictype, lexsize, lsize, rsize
     cdef object charset
@@ -103,17 +103,17 @@ cdef class DicFileMap:
         self.da = new DoubleArray()
         self.da.set_array(self.mmap + 72)
 
-        self.token = self.mmap + 72 + dsize
-        self.feature = self.token + tsize
+        self.entry = self.mmap + 72 + dsize
+        self.feature = self.entry + tsize
 
-    cpdef get_tokens_by_index(self, idx, count):
-        results = _get_tokens(self.token, self.feature, idx, count)
-        return [(t['lcAttr'], t['rcAttr'], t['posid'], t['wcost'], f.decode('utf-8')) for t, f in results]
+    cpdef get_entries_by_index(self, idx, count):
+        results = _get_entries(self.entry, self.feature, idx, count)
+        return [(e['lcAttr'], e['rcAttr'], e['posid'], e['wcost'], f.decode('utf-8')) for e, f in results]
 
-    cpdef get_tokens(self, result):
+    cpdef get_entries(self, result):
         index = result >> 8
         count = result & 0xFF
-        return self.get_tokens_by_index(index, count)
+        return self.get_entries_by_index(index, count)
 
     cpdef exactMatchSearch(self, s):
         v, l = _exact_match_search(self.da, s)
@@ -123,10 +123,10 @@ cdef class DicFileMap:
         return _common_prefix_search(self.da, s)
 
     cpdef lookup(self, s):
-        return _lookup(self.da, self.token, s)
+        return _lookup(self.da, self.entry, s)
 
     cpdef get_feature(self, idx):
-        return _get_feature(self.token, self.feature, idx)
+        return _get_feature(self.entry, self.feature, idx)
 
     def __del__(self):
         _munmap(self.mmap, self.size)
@@ -178,7 +178,7 @@ cdef class MeCabDictionary:
         for category_name in self.char_property.category_names:
             entries = []
             result = self.unk_dic.exactMatchSearch(category_name.encode('utf-8'))
-            for l, r, p, w , f in self.unk_dic.get_tokens(result):
+            for l, r, p, w , f in self.unk_dic.get_entries(result):
                 entries.append(
                     (l, r, w, ','.join(f.split(',')[:4]))
                 )

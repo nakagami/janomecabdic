@@ -51,27 +51,27 @@ inline CharInfo _get_char_info(void *m, size_t offset, unsigned short code_point
 }
 
 
-inline std::vector<std::pair<Token, std::string> >_get_tokens(void *token, void *feature, unsigned int index, unsigned int count)
+inline std::vector<std::pair<Entry, std::string> >_get_entries(void *entry, void *feature, unsigned int index, unsigned int count)
 {
-    std::vector<std::pair<Token, std::string> > results;
+    std::vector<std::pair<Entry, std::string> > results;
     for (unsigned int i = 0; i< count; ++i) {
-        Token t = reinterpret_cast<Token *>(token)[index+i];
-        std::string s(reinterpret_cast<char *>(feature) + t.feature);
-        results.push_back(std::make_pair(t, s));
+        Entry e = reinterpret_cast<Entry *>(entry)[index+i];
+        std::string s(reinterpret_cast<char *>(feature) + e.feature);
+        results.push_back(std::make_pair(e, s));
     }
     return results;
 }
 
 
-inline std::string _get_feature(void *token, void *feature, unsigned int index)
+inline std::string _get_feature(void *entry, void *feature, unsigned int index)
 {
-    Token t = reinterpret_cast<Token *>(token)[index];
-    std::string s(reinterpret_cast<char *>(feature) + t.feature);
+    Entry e = reinterpret_cast<Entry *>(entry)[index];
+    std::string s(reinterpret_cast<char *>(feature) + e.feature);
     return s;
 }
 
 
-inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *token, char *s)
+inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *entry, char *s)
 {
     std::vector<std::vector<int> > results;
 
@@ -81,12 +81,12 @@ inline std::vector<std::vector<int> > _lookup(Darts::DoubleArray *da, void *toke
         unsigned int idx = result_pair[i].value >> 8;
         int count = result_pair[i].value & 0xFF;
         for (int j = 0; j < count; ++j) {
-            Token t = reinterpret_cast<Token *>(token)[idx + j];
+            Entry e = reinterpret_cast<Entry *>(entry)[idx + j];
             std::vector<int> v;
-            v.push_back(t.lcAttr);
-            v.push_back(t.rcAttr);
-            v.push_back(t.posid);
-            v.push_back(t.wcost);
+            v.push_back(e.lcAttr);
+            v.push_back(e.rcAttr);
+            v.push_back(e.posid);
+            v.push_back(e.wcost);
             v.push_back(result_pair[i].length);
             v.push_back(idx + j);
             results.push_back(v);
