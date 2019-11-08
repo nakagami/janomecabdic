@@ -82,7 +82,6 @@ class DicFileMap:
     def get_tokens(self, result):
         index = result >> 8
         count = result & 0xFF
-        results = []
         return self.get_tokens_by_index(index, count)
 
     @lru_cache(maxsize=1024)
