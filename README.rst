@@ -10,9 +10,9 @@ via janomecabdic.
 Requirements
 -------------------------
 
-- MeCab + MeCab dictionary (utf-8 encoded)
+- MeCab and MeCab dictionary (utf-8 encoded)
 - Python 3.5+
-- Cython available environment (C++ compiler)
+- Cython and C++
 - janome
 
 Instration
@@ -25,12 +25,13 @@ Install MeCab and MeCab dictionary.
 
     sudo apt install mecab mecab-ipadic-utf8
 
-Install C++ compiler for Cython.
+Install C++ compiler and Cython.
 (e.g.: Ubuntu/Debian)
 
 ::
 
     sudo apt install build-essential
+    pip install cython
 
 Install janome and janomecabdic.
 

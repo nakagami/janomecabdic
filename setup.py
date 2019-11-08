@@ -31,6 +31,5 @@ setup(
     description='MeCab dictionary access library for janome',
     long_description=open('README.rst').read(),
     test_suite="tests",
-    setup_requires=["cython"],
     ext_modules=ext_modules,
 )
