@@ -141,7 +141,10 @@ cdef class MeCabDictionary:
 
     def __init__(self, dicdir=None):
         if dicdir is None:
-            with open('/etc/mecabrc', 'r') as f:
+            rcpath = os.path.join(os.path.expanduser('~'), 'mecabrc')
+            if not os.access(rcpath, os.R_OK):
+                rcpath = '/etc/mecabrc'
+            with open(rcpath, 'r') as f:
                 for s in f.readlines():
                     kv = s.split('=')
                     if kv[0].strip() == 'dicdir':
