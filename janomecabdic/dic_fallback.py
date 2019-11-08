@@ -133,9 +133,9 @@ class DicFileMap:
         for value, length in self.commonPrefixSearch(s):
             idx = value >> 8
             count = value & 0xff
-            tokens = self.get_entries_by_index(idx, count)
-            for i in range(len(tokens)):
-                l, r, p, w, _ = tokens[i]
+            entries = self.get_entries_by_index(idx, count)
+            for i in range(len(entries)):
+                l, r, p, w, _ = entries[i]
                 results.append((l, r, p, w, length, idx + i))
         return results
 
