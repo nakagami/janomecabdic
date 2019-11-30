@@ -27,7 +27,7 @@ Install MeCab and MeCab dictionary.
 
 Install C++ compiler and Cython
 (e.g.: Ubuntu/Debian),
-if you need.
+as you like.
 
 ::
 
