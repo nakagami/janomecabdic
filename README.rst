@@ -12,7 +12,7 @@ Requirements
 
 - MeCab and MeCab dictionary (utf-8 encoded)
 - Python 3.5+
-- Cython and C++
+- Cython and C++ (optional)
 - janome
 
 Instration
@@ -25,7 +25,7 @@ Install MeCab and MeCab dictionary.
 
     sudo apt install mecab mecab-ipadic-utf8
 
-Install C++ compiler and Cython.
+Install C++ compiler and Cython (optional).
 (e.g.: Ubuntu/Debian)
 
 ::
