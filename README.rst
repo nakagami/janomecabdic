@@ -25,8 +25,9 @@ Install MeCab and MeCab dictionary.
 
     sudo apt install mecab mecab-ipadic-utf8
 
-Install C++ compiler and Cython (optional).
-(e.g.: Ubuntu/Debian)
+Install C++ compiler and Cython
+(e.g.: Ubuntu/Debian),
+if you need.
 
 ::
 
