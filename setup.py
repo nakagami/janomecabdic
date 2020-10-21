@@ -21,7 +21,7 @@ classifiers = [
 
 setup(
     name="janomecabdic",
-    version="0.1.0",
+    version="0.1.1",
     url='https://github.com/nakagami/janomecabdic/',
     classifiers=classifiers,
     license="LGPL2,BSD",
