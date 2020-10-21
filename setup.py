@@ -21,7 +21,7 @@ classifiers = [
 
 setup(
     name="janomecabdic",
-    version="0.1.1",
+    version="0.1.2",
     url='https://github.com/nakagami/janomecabdic/',
     classifiers=classifiers,
     license="LGPL2,BSD",
@@ -31,5 +31,6 @@ setup(
     description='MeCab dictionary access library for janome',
     long_description=open('README.rst').read(),
     test_suite="tests",
+    packages=['janomecabdic'],
     ext_modules=ext_modules,
 )
